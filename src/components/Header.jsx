@@ -48,7 +48,16 @@ const Header = () => {
         >
           HOME
         </NavLink>
-
+        <NavLink
+          to="/all-recipes"
+          className={({ isActive }) =>
+            `text-gray-700 hover:text-emerald-600 font-medium transition ${
+              isActive ? "underline" : ""
+            }`
+          }
+        >
+          All Recipes
+        </NavLink>
         {user && (
           <NavLink
             to="/add-recipe"
