@@ -3,7 +3,7 @@ import { Helmet } from "react-helmet";
 import { FaEye, FaEyeSlash, FaGoogle } from "react-icons/fa6";
 import { Link, useLocation, useNavigate } from "react-router";
 import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css"; // Importing styles for toast notifications
+import "react-toastify/dist/ReactToastify.css";
 import { AuthContext } from "../provider/authContext";
 
 const Login = () => {
