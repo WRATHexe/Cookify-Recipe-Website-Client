@@ -49,7 +49,7 @@ const Header = () => {
           HOME
         </NavLink>
         <NavLink
-          to="/all-recipes"
+          to="/recipes"
           className={({ isActive }) =>
             `text-gray-700 hover:text-emerald-600 font-medium transition ${
               isActive ? "underline" : ""

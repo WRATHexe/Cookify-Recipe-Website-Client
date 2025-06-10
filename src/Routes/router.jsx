@@ -5,6 +5,7 @@ import AllRecipes from "../pages/AllRecipes";
 import ErrorPage from "../pages/ErrorPage";
 import ForgotPass from "../pages/ForgotPass";
 import Login from "../pages/Login";
+import RecipeDetails from "../pages/RecipeDetails";
 import Register from "../pages/Register";
 import PrivateRoute from "./PrivateRoute";
 
@@ -18,9 +19,17 @@ const router = createBrowserRouter([
         element: <h1>Welcome to the Home Page</h1>,
       },
       {
-        path: "/all-recipes",
+        path: "/recipes",
         element: <AllRecipes></AllRecipes>,
         loader: () => fetch("http://localhost:4000/recipes"),
+      },
+      {
+        path: "/recipes/:id",
+        element: (
+          <PrivateRoute>
+            <RecipeDetails></RecipeDetails>
+          </PrivateRoute>
+        ),
       },
       {
         path: "/login",
