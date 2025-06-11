@@ -84,7 +84,8 @@ const Header = () => {
                     <p className="font-semibold text-center mb-3">
                       {user.displayName}
                     </p>
-                    <div className="flex flex-col gap-2">
+                    {/* Only show navItems in tooltip on small devices */}
+                    <div className="flex flex-col gap-2 md:hidden">
                       {navItems
                         .filter((item) => !item.private || user)
                         .map(({ path, label }) => (
@@ -103,13 +104,13 @@ const Header = () => {
                             {label}
                           </NavLink>
                         ))}
-                      <button
-                        onClick={logoutHandler}
-                        className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-full font-medium w-full transition mt-2"
-                      >
-                        Logout
-                      </button>
                     </div>
+                    <button
+                      onClick={logoutHandler}
+                      className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-full font-medium w-full transition mt-2"
+                    >
+                      Logout
+                    </button>
                   </>
                 ) : (
                   <div className="flex flex-col gap-2">
