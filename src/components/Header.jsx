@@ -1,13 +1,12 @@
 import { useContext, useState } from "react";
+import { FaUserCircle } from "react-icons/fa";
 import { Link, NavLink, useNavigate } from "react-router";
 import { toast } from "react-toastify";
-
 import { AuthContext } from "../provider/authContext";
 
 const Header = () => {
   const { user, logOut } = useContext(AuthContext);
   const navigate = useNavigate();
-
   const [isTooltipVisible, setTooltipVisible] = useState(false);
 
   const logoutHandler = () => {
@@ -15,218 +14,226 @@ const Header = () => {
       .then(() => {
         navigate("/login");
         toast.success("Logout successful");
-        setTooltipVisible(false); // Hide tooltip when logging out
+        setTooltipVisible(false);
       })
-      .catch((error) => {
-        console.error("Error logging out:", error);
-      });
+      .catch((error) => console.error("Logout error:", error));
   };
 
-  // Toggle Tooltip visibility on avatar click
-  const toggleTooltip = () => {
-    setTooltipVisible((prev) => !prev);
-  };
+  const navItems = [
+    { path: "/", label: "Home" },
+    { path: "/recipes", label: "All Recipes" },
+    { path: "/my-recipes", label: "My Recipes", private: true },
+    { path: "/add-recipe", label: "Add Recipe", private: true },
+  ];
 
   return (
-    <nav className="navbar bg-white shadow border-b border-gray-200 px-4 py-3 sticky top-0 z-50">
-      <div className="flex-1">
+    <nav className="bg-[#f3f4f6] dark:bg-[#232526] border-b dark:border-emerald-700 sticky top-0 z-50 shadow-sm transition-colors duration-300">
+      <div className="max-w-[1800px] mx-auto px-2 sm:px-4 py-2 sm:py-3 flex items-center justify-between">
+        {/* Logo */}
         <Link
           to="/"
-          className="text-2xl font-extrabold text-slate-800 tracking-wide hover:text-emerald-600 transition"
+          className="group text-xl sm:text-3xl font-extrabold tracking-tight text-orange-600 hover:text-emerald-500 dark:text-orange-400 transition-all duration-300 transform hover:scale-105"
         >
-          COOKIFY
+          <span className="inline-block group-hover:animate-wiggle">🍴</span>{" "}
+          <span className="ml-1">Cookify</span>
         </Link>
-      </div>
-      <div className="hidden md:flex items-center gap-8 mr-12">
-        <NavLink
-          to="/"
-          className={({ isActive }) =>
-            `text-gray-700 hover:text-emerald-600 font-medium transition ${
-              isActive ? "underline" : ""
-            }`
-          }
-        >
-          HOME
-        </NavLink>
-        <NavLink
-          to="/recipes"
-          className={({ isActive }) =>
-            `text-gray-700 hover:text-emerald-600 font-medium transition ${
-              isActive ? "underline" : ""
-            }`
-          }
-        >
-          All Recipes
-        </NavLink>
-        {user && (
-          <NavLink
-            to="/my-recipes"
-            className={({ isActive }) =>
-              `text-gray-700 hover:text-emerald-600 font-medium transition ${
-                isActive ? "underline" : ""
-              }`
-            }
-          >
-            My Recipes
-          </NavLink>
-        )}
-        {user && (
-          <NavLink
-            to="/add-recipe"
-            className={({ isActive }) =>
-              `text-gray-700 hover:text-emerald-600 font-medium transition ${
-                isActive ? "underline" : ""
-              }`
-            }
-          >
-            Add Recipe
-          </NavLink>
-        )}
 
-        {!user ? (
-          <div className="flex gap-4">
-            <NavLink
-              to="/login"
-              className="bg-emerald-600 text-white px-5 py-2 rounded-full font-semibold shadow hover:bg-emerald-700 transition"
-            >
-              Login
-            </NavLink>
-            <NavLink
-              to="/register"
-              className="bg-transparent text-emerald-600 border-2 border-emerald-600 px-5 py-2 rounded-full font-semibold hover:bg-emerald-600 hover:text-white transition"
-            >
-              Register
-            </NavLink>
-          </div>
-        ) : (
-          <div className="flex items-center gap-5 ml-8 relative">
-            <div className="avatar cursor-pointer" onClick={toggleTooltip}>
-              <div className="w-10 rounded-full ring ring-emerald-500 ring-offset-2">
-                <img
-                  alt="user"
-                  src={
-                    user?.photoURL ||
-                    "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
-                  }
-                  className="w-9 h-9 rounded-full hover:shadow-lg transition-transform"
-                  title={user?.displayName || "User"}
-                />
-              </div>
-            </div>
+        {/* Desktop Navigation */}
+        <div className="hidden md:flex items-center gap-3 lg:gap-6">
+          {navItems
+            .filter((item) => !item.private || user)
+            .map(({ path, label }) => (
+              <NavLink
+                key={path}
+                to={path}
+                className={({ isActive }) =>
+                  `relative px-2 sm:px-3 py-1 font-medium text-gray-700 dark:text-gray-200 hover:text-orange-600 dark:hover:text-orange-400 transition duration-200 ${
+                    isActive
+                      ? "text-orange-600 dark:text-orange-400 font-semibold after:absolute after:bottom-0 after:left-1/2 after:-translate-x-1/2 after:w-2/3 after:h-[3px] after:bg-orange-500 dark:after:bg-orange-400 after:rounded-full"
+                      : ""
+                  }`
+                }
+              >
+                {label}
+              </NavLink>
+            ))}
 
-            {/* Conditionally Render Tooltip */}
-            {isTooltipVisible && (
-              <div className="absolute top-full mt-2 p-4 bg-gradient-to-r from-emerald-500 to-emerald-700 shadow-lg border border-gray-300 rounded-xl w-52 text-center text-white transform transition-all duration-300 ease-in-out opacity-100">
-                <div className="text-xl font-semibold mb-3">
-                  {user.displayName}
-                </div>
-                <button
-                  onClick={logoutHandler}
-                  className="bg-white text-emerald-600 px-4 py-2 rounded-full font-semibold shadow hover:bg-emerald-100 transition"
-                >
-                  Logout
-                </button>
-                {/* Arrow */}
-                <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -mt-2 w-4 h-4 bg-gradient-to-r from-emerald-500 to-emerald-700 rotate-45 border-t border-l border-gray-300"></div>
-              </div>
-            )}
-          </div>
-        )}
-      </div>
-
-      <div className="md:hidden flex items-center gap-2">
-        {user && (
-          <div className="avatar">
-            <div className="w-9 rounded-full ring ring-emerald-500 ring-offset-2">
+          {/* Auth Buttons */}
+          <div className="relative ml-2 sm:ml-4 mr-24">
+            {user ? (
               <img
-                alt="user"
                 src={
-                  user?.photoURL ||
+                  user.photoURL ||
                   "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
                 }
-                className="w-9 h-9 rounded-full hover:shadow-lg transition-transform"
-                title={user?.displayName || "User"}
+                alt="User"
+                onClick={() => setTooltipVisible(!isTooltipVisible)}
+                className="w-9 h-9 sm:w-10 sm:h-10 rounded-full ring ring-emerald-500 ring-offset-2 cursor-pointer hover:scale-105 transition"
               />
-            </div>
+            ) : (
+              <FaUserCircle
+                size={40}
+                className="text-orange-400 cursor-pointer hover:text-orange-600 transition"
+                onClick={() => setTooltipVisible(!isTooltipVisible)}
+              />
+            )}
+            {isTooltipVisible && (
+              <div className="absolute right-0 mt-3 w-56 p-4 bg-white dark:bg-[#2d2d2d] text-gray-800 dark:text-white border border-gray-200 dark:border-gray-600 shadow-xl rounded-xl z-50 animate-fadeIn">
+                {user ? (
+                  <>
+                    <p className="font-semibold text-center mb-3">
+                      {user.displayName}
+                    </p>
+                    <div className="flex flex-col gap-2">
+                      {navItems
+                        .filter((item) => !item.private || user)
+                        .map(({ path, label }) => (
+                          <NavLink
+                            key={path}
+                            to={path}
+                            onClick={() => setTooltipVisible(false)}
+                            className={({ isActive }) =>
+                              `block px-3 py-2 rounded font-medium text-gray-700 dark:text-gray-200 hover:bg-orange-100 dark:hover:bg-orange-900 hover:text-orange-600 dark:hover:text-orange-400 transition duration-200 ${
+                                isActive
+                                  ? "bg-orange-100 dark:bg-orange-900 text-orange-600 dark:text-orange-400 font-semibold"
+                                  : ""
+                              }`
+                            }
+                          >
+                            {label}
+                          </NavLink>
+                        ))}
+                      <button
+                        onClick={logoutHandler}
+                        className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-full font-medium w-full transition mt-2"
+                      >
+                        Logout
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  <div className="flex flex-col gap-2">
+                    <NavLink
+                      to="/login"
+                      onClick={() => setTooltipVisible(false)}
+                      className="bg-emerald-600 text-white px-5 py-2 rounded-full font-semibold shadow hover:bg-emerald-700 transition"
+                    >
+                      Login
+                    </NavLink>
+                    <NavLink
+                      to="/register"
+                      onClick={() => setTooltipVisible(false)}
+                      className="border-2 border-cyan-600 text-cyan-600 px-5 py-2 rounded-full font-semibold hover:bg-cyan-600 hover:text-white transition"
+                    >
+                      Register
+                    </NavLink>
+                  </div>
+                )}
+                <div className="absolute top-0 right-4 -mt-2 w-4 h-4 rotate-45 bg-white dark:bg-[#2d2d2d] border-t border-l border-gray-200 dark:border-gray-600" />
+              </div>
+            )}
           </div>
-        )}
+        </div>
 
-        <div className="dropdown dropdown-end">
-          <label tabIndex={0} className="btn btn-ghost btn-circle">
-            <svg
-              className="w-7 h-7 text-slate-700"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M4 8h16M4 16h16"
+        {/* Mobile: Only show avatar/icon, open tooltip on click */}
+        <div className="flex md:hidden items-center">
+          <div className="relative">
+            {user ? (
+              <img
+                src={
+                  user.photoURL ||
+                  "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
+                }
+                alt="User"
+                onClick={() => setTooltipVisible(!isTooltipVisible)}
+                className="w-9 h-9 rounded-full ring ring-emerald-500 ring-offset-2 cursor-pointer hover:scale-105 transition"
               />
-            </svg>
-          </label>
-          <ul
-            tabIndex={0}
-            className="menu menu-sm dropdown-content mt-3 z-[1] p-3 shadow bg-white border border-gray-200 rounded-box w-52"
-          >
-            <li>
-              <NavLink to="/" className="text-slate-700 hover:text-emerald-600">
-                Home
-              </NavLink>
-            </li>
-            {user && (
-              <li>
+            ) : (
+              <FaUserCircle
+                size={36}
+                className="text-orange-400 cursor-pointer hover:text-orange-600 transition"
+                onClick={() => setTooltipVisible(!isTooltipVisible)}
+              />
+            )}
+            {isTooltipVisible && (
+              <div className="absolute right-0 mt-3 w-56 p-4 bg-white dark:bg-[#2d2d2d] text-gray-800 dark:text-white border border-gray-200 dark:border-gray-600 shadow-xl rounded-xl z-50 animate-fadeIn">
+                {/* Always show Home and All Recipes */}
+                <NavLink
+                  to="/"
+                  onClick={() => setTooltipVisible(false)}
+                  className={({ isActive }) =>
+                    `block px-3 py-2 rounded font-medium text-gray-700 dark:text-gray-200 hover:bg-orange-100 dark:hover:bg-orange-900 hover:text-orange-600 dark:hover:text-orange-400 transition duration-200 ${
+                      isActive
+                        ? "bg-orange-100 dark:bg-orange-900 text-orange-600 dark:text-orange-400 font-semibold"
+                        : ""
+                    }`
+                  }
+                >
+                  Home
+                </NavLink>
                 <NavLink
                   to="/recipes"
-                  className="text-slate-700 hover:text-emerald-600"
+                  onClick={() => setTooltipVisible(false)}
+                  className={({ isActive }) =>
+                    `block px-3 py-2 rounded font-medium text-gray-700 dark:text-gray-200 hover:bg-orange-100 dark:hover:bg-orange-900 hover:text-orange-600 dark:hover:text-orange-400 transition duration-200 ${
+                      isActive
+                        ? "bg-orange-100 dark:bg-orange-900 text-orange-600 dark:text-orange-400 font-semibold"
+                        : ""
+                    }`
+                  }
                 >
-                  Recipes
+                  All Recipes
                 </NavLink>
-              </li>
+                {user ? (
+                  <>
+                    {/* Private links for logged in user */}
+                    {navItems
+                      .filter((item) => item.private)
+                      .map(({ path, label }) => (
+                        <NavLink
+                          key={path}
+                          to={path}
+                          onClick={() => setTooltipVisible(false)}
+                          className={({ isActive }) =>
+                            `block px-3 py-2 rounded font-medium text-gray-700 dark:text-gray-200 hover:bg-orange-100 dark:hover:bg-orange-900 hover:text-orange-600 dark:hover:text-orange-400 transition duration-200 ${
+                              isActive
+                                ? "bg-orange-100 dark:bg-orange-900 text-orange-600 dark:text-orange-400 font-semibold"
+                                : ""
+                            }`
+                          }
+                        >
+                          {label}
+                        </NavLink>
+                      ))}
+                    <button
+                      onClick={logoutHandler}
+                      className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-full font-medium w-full transition mt-2"
+                    >
+                      Logout
+                    </button>
+                  </>
+                ) : (
+                  <div className="flex flex-col gap-2 mt-2">
+                    <NavLink
+                      to="/login"
+                      onClick={() => setTooltipVisible(false)}
+                      className="bg-emerald-600 text-white px-5 py-2 rounded-full font-semibold shadow hover:bg-emerald-700 transition"
+                    >
+                      Login
+                    </NavLink>
+                    <NavLink
+                      to="/register"
+                      onClick={() => setTooltipVisible(false)}
+                      className="border-2 border-cyan-600 text-cyan-600 px-5 py-2 rounded-full font-semibold hover:bg-cyan-600 hover:text-white transition"
+                    >
+                      Register
+                    </NavLink>
+                  </div>
+                )}
+                <div className="absolute top-0 right-4 -mt-2 w-4 h-4 rotate-45 bg-white dark:bg-[#2d2d2d] border-t border-l border-gray-200 dark:border-gray-600" />
+              </div>
             )}
-            {user && (
-              <li>
-                <NavLink
-                  to="/my-recipes"
-                  className="text-slate-700 hover:text-emerald-600"
-                >
-                  My Recipes
-                </NavLink>
-              </li>
-            )}
-            {user && (
-              <li>
-                <NavLink
-                  to="/add-recipe"
-                  className="text-slate-700 hover:text-emerald-600"
-                >
-                  Add Recipe
-                </NavLink>
-              </li>
-            )}
-            {!user && (
-              <li>
-                <NavLink
-                  to="/login"
-                  className="text-slate-700 hover:text-emerald-600"
-                >
-                  Login
-                </NavLink>
-              </li>
-            )}
-            {user && (
-              <li>
-                <button
-                  onClick={logoutHandler}
-                  className="text-slate-700 hover:text-emerald-600 w-full text-left"
-                >
-                  Logout
-                </button>
-              </li>
-            )}
-          </ul>
+          </div>
         </div>
       </div>
     </nav>

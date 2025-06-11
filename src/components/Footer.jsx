@@ -1,6 +1,6 @@
 const Footer = () => {
   return (
-    <footer className="footer footer-horizontal footer-center bg-gradient-to-r from-slate-50 via-white to-slate-50 text-slate-700 p-10 pt-12">
+    <footer className="footer footer-horizontal footer-center bg-[#f3f4f6] dark:bg-[#232526] text-slate-700 p-10 pt-14 transition-colors duration-300">
       <nav className="grid grid-flow-col gap-6">
         {["About us", "Contact", "Jobs", "Press kit"].map((item) => (
           <a
