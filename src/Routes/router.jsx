@@ -4,6 +4,7 @@ import AddRecipe from "../pages/AddRecipe";
 import AllRecipes from "../pages/AllRecipes";
 import ErrorPage from "../pages/ErrorPage";
 import ForgotPass from "../pages/ForgotPass";
+import Home from "../pages/Home";
 import Login from "../pages/Login";
 import MyRecipes from "../pages/MyRecipes";
 import RecipeDetails from "../pages/RecipeDetails";
@@ -18,7 +19,7 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: <h1>Welcome to the Home Page</h1>,
+        element: <Home></Home>,
       },
       {
         path: "/recipes",

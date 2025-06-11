@@ -26,7 +26,8 @@ const AddRecipe = () => {
           Swal.fire({
             title: "Recipe Added Successfully!",
             icon: "success",
-            draggable: true,
+            timer: 2000,
+            showConfirmButton: false,
           });
           //form.reset();
         }

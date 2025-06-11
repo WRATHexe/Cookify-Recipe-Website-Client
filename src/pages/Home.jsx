@@ -1,5 +1,11 @@
+import TopRecipes from "../components/TopRecipes";
+
 const Home = () => {
-  return <div></div>;
+  return (
+    <>
+      <TopRecipes />
+    </>
+  );
 };
 
 export default Home;
