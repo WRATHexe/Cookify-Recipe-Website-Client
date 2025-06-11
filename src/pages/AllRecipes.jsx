@@ -3,7 +3,6 @@ import RecipeCard from "../components/RecipeCard";
 
 const AllRecipes = () => {
   const recipes = useLoaderData();
-  console.log(recipes);
   return (
     <div className="min-h-screen bg-gradient-to-r from-indigo-50 via-blue-50 to-purple-50 py-12 px-6">
       <div className="w-full max-w-6xl mx-auto">

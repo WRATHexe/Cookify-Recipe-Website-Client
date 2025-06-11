@@ -1,7 +1,10 @@
-import { useEffect, useState } from "react";
-import { useParams } from "react-router"; // FIXED
+import { useContext, useEffect, useState } from "react";
+import { useParams } from "react-router";
+import Swal from "sweetalert2";
+import { AuthContext } from "../provider/authContext";
 
 const RecipeDetails = () => {
+  const { user } = useContext(AuthContext);
   const { id } = useParams();
   const [recipe, setRecipe] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -43,6 +46,24 @@ const RecipeDetails = () => {
       </div>
     );
   }
+  const handleLike = () => {
+    if (user.email === recipe.createdBy) {
+      Swal.fire({
+        title: "You cannot like your own recipe!",
+        icon: "warning",
+        confirmButtonText: "OK",
+      });
+      return;
+    }
+    // Increment likes logic here
+    // For now, just log to console
+    console.log("Recipe liked!");
+    // You can also update the state to reflect the new likes count
+    setRecipe((prevRecipe) => ({
+      ...prevRecipe,
+      likeCount: prevRecipe.likeCount + 1,
+    }));
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-indigo-50 via-blue-50 to-purple-50 py-12 px-6">
@@ -51,17 +72,15 @@ const RecipeDetails = () => {
           {/* Recipe Image */}
           <img
             src={
-              recipe.recipePhoto ||
+              recipe.photo ||
               "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
             }
-            alt={recipe.recipeTitle}
+            alt={recipe.title}
             className="w-full h-64 object-cover rounded-xl"
           />
 
           {/* Recipe Title */}
-          <h2 className="text-3xl font-bold text-gray-800">
-            {recipe.recipeTitle}
-          </h2>
+          <h2 className="text-3xl font-bold text-gray-800">{recipe.title}</h2>
 
           {/* Ingredients */}
           <div className="space-y-4">
@@ -80,7 +99,7 @@ const RecipeDetails = () => {
           {/* Cuisine Type & Prep Time */}
           <div className="space-y-4">
             <p className="text-sm text-gray-600">
-              <strong>Cuisine:</strong> {recipe.cuisine}
+              <strong>Cuisine:</strong> {recipe.cuisineType}
             </p>
             <p className="text-sm text-gray-600">
               <strong>Preparation Time:</strong> {recipe.prepTime} minutes
@@ -89,11 +108,14 @@ const RecipeDetails = () => {
 
           {/* Likes */}
           <div className="flex items-center space-x-4">
-            <button className="btn bg-indigo-600 text-white px-6 py-2 rounded-xl shadow-lg hover:bg-indigo-700">
+            <button
+              onClick={handleLike}
+              className="btn bg-indigo-600 text-white px-6 py-2 rounded-xl shadow-lg hover:bg-indigo-700"
+            >
               Like
             </button>
             <p className="text-sm text-gray-500">
-              Liked by {recipe.likes} people
+              Liked by {recipe.likeCount} people
             </p>
           </div>
         </div>

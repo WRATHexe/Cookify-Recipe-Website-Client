@@ -60,6 +60,18 @@ const Header = () => {
         </NavLink>
         {user && (
           <NavLink
+            to="/my-recipes"
+            className={({ isActive }) =>
+              `text-gray-700 hover:text-emerald-600 font-medium transition ${
+                isActive ? "underline" : ""
+              }`
+            }
+          >
+            My Recipes
+          </NavLink>
+        )}
+        {user && (
+          <NavLink
             to="/add-recipe"
             className={({ isActive }) =>
               `text-gray-700 hover:text-emerald-600 font-medium transition ${
@@ -164,6 +176,26 @@ const Header = () => {
                 Home
               </NavLink>
             </li>
+            {user && (
+              <li>
+                <NavLink
+                  to="/recipes"
+                  className="text-slate-700 hover:text-emerald-600"
+                >
+                  Recipes
+                </NavLink>
+              </li>
+            )}
+            {user && (
+              <li>
+                <NavLink
+                  to="/my-recipes"
+                  className="text-slate-700 hover:text-emerald-600"
+                >
+                  My Recipes
+                </NavLink>
+              </li>
+            )}
             {user && (
               <li>
                 <NavLink

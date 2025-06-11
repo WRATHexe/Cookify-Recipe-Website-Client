@@ -1,11 +1,17 @@
+import { useContext, useState } from "react";
 import Swal from "sweetalert2";
+import { AuthContext } from "../provider/authContext";
 
 const AddRecipe = () => {
+  const { user } = useContext(AuthContext);
+  const [cuisineType, setCuisineType] = useState("");
+  console.log(user);
   const handleAddCoffee = (event) => {
     event.preventDefault();
     const form = event.target;
     const formData = new FormData(form);
     const newRecipe = Object.fromEntries(formData.entries());
+    newRecipe.createdBy = user?.email || "Anonymous";
 
     fetch("http://localhost:4000/Recipes", {
       method: "POST",
@@ -42,7 +48,7 @@ const AddRecipe = () => {
             </label>
             <input
               type="text"
-              name="recipePhoto"
+              name="photo"
               placeholder="Enter the recipe photo URL"
               className="input w-full p-4 border-2 border-gray-300 rounded-xl shadow-md focus:ring-2 focus:ring-indigo-500 transition-all duration-300 ease-in-out"
             />
@@ -56,7 +62,7 @@ const AddRecipe = () => {
             <input
               required
               type="text"
-              name="recipeTitle"
+              name="title"
               placeholder="Enter the recipe name"
               className="input w-full p-4 border-2 border-gray-300 rounded-xl shadow-md focus:ring-2 focus:ring-indigo-500 transition-all duration-300 ease-in-out"
             />
@@ -90,24 +96,24 @@ const AddRecipe = () => {
             ></textarea>
           </div>
 
-          {/* Cuisine Type Section */}
-          <div>
+          <div className="mb-6">
             <label className="text-lg font-semibold text-gray-700">
               Cuisine Type
             </label>
             <select
-              required
-              name="CuisineType"
-              className="select w-full p-4 border-2 border-gray-300 rounded-xl shadow-md focus:ring-2 focus:ring-indigo-500 transition-all duration-300 ease-in-out"
+              name="cuisineType"
+              value={cuisineType}
+              onChange={(e) => {
+                setCuisineType(e.target.value);
+              }}
+              className="w-full p-4 border-2 border-gray-300 rounded-xl shadow-md focus:ring-2 focus:ring-indigo-500 transition-all duration-300 ease-in-out"
             >
-              <option disabled selected>
-                Select Cuisine
-              </option>
-              <option>Italian</option>
-              <option>Mexican</option>
-              <option>Indian</option>
-              <option>Chinese</option>
-              <option>Others</option>
+              <option value="">Select Cuisine</option>
+              <option value="Italian">Italian</option>
+              <option value="Mexican">Mexican</option>
+              <option value="Indian">Indian</option>
+              <option value="Chinese">Chinese</option>
+              <option value="Others">Others</option>
             </select>
           </div>
 
@@ -153,7 +159,7 @@ const AddRecipe = () => {
             <label className="text-lg font-semibold text-gray-700">Likes</label>
             <input
               type="number"
-              name="likes"
+              name="likeCount"
               value="0"
               readOnly
               className="input w-full p-4 bg-gray-100 text-gray-500 cursor-not-allowed border-2 border-gray-300 rounded-xl shadow-md"

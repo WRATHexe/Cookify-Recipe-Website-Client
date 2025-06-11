@@ -5,8 +5,10 @@ import AllRecipes from "../pages/AllRecipes";
 import ErrorPage from "../pages/ErrorPage";
 import ForgotPass from "../pages/ForgotPass";
 import Login from "../pages/Login";
+import MyRecipes from "../pages/MyRecipes";
 import RecipeDetails from "../pages/RecipeDetails";
 import Register from "../pages/Register";
+import UpdateForm from "../pages/UpdateRecipe";
 import PrivateRoute from "./PrivateRoute";
 
 const router = createBrowserRouter([
@@ -48,6 +50,14 @@ const router = createBrowserRouter([
         element: (
           <PrivateRoute>
             <AddRecipe></AddRecipe>
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "/my-recipes",
+        element: (
+          <PrivateRoute>
+            <MyRecipes></MyRecipes>
           </PrivateRoute>
         ),
       },

@@ -12,11 +12,7 @@ const RecipeCard = ({ recipe }) => {
       headers: {
         "Content-Type": "application/json",
       },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
-      });
+    }).then((res) => res.json());
 
     if (user) {
       navigate(`/recipes/${id}`);
@@ -28,12 +24,12 @@ const RecipeCard = ({ recipe }) => {
   return (
     <div className="bg-white rounded-xl shadow-lg p-6 space-y-4">
       <img
-        src={recipe.recipePhoto}
-        alt={recipe.recipeTitle}
+        src={recipe.photo}
+        alt={recipe.title}
         className="w-full h-48 object-cover rounded-xl"
       />
-      <h3 className="text-xl font-semibold">{recipe.recipeTitle}</h3>
-      <p className="text-sm text-gray-600">Cuisine: {recipe.CuisineType}</p>
+      <h3 className="text-xl font-semibold">{recipe.title}</h3>
+      <p className="text-sm text-gray-600">Cuisine: {recipe.cuisineType}</p>
       <p className="text-sm text-gray-600">Prep Time: {recipe.prepTime} mins</p>
 
       <button
