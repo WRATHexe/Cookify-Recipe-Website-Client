@@ -9,19 +9,19 @@ const MyRecipes = () => {
   const [myRecipes, setMyRecipes] = useState([]); // State for storing the user's recipes
 
   useEffect(() => {
-      const fetchMyRecipes = async () => {
-        try {
-          const response = await fetch(
-            `http://localhost:4000/recipes?createdBy=${user._id}`
-          );
-          const data = await response.json();
-          setMyRecipes(data); // Set the fetched recipes into state
-        } catch (error) {
-          console.error("Error fetching recipes:", error);
-        }
-      };
+    const fetchMyRecipes = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:4000/recipes/user/${user.email}`
+        );
+        const data = await response.json();
+        setMyRecipes(data); // Set the fetched recipes into state
+      } catch (error) {
+        console.error("Error fetching recipes:", error);
+      }
+    };
 
-      fetchMyRecipes();
+    fetchMyRecipes();
   }, [user, navigate]);
 
   // Handle recipe deletion
@@ -29,10 +29,9 @@ const MyRecipes = () => {
     try {
       const response = await fetch(`http://localhost:4000/recipes/${id}`, {
         method: "DELETE",
-
       });
       if (response.ok) {
-        setMyRecipes(myRecipes.filter((recipe) => recipe._id !== id)); 
+        setMyRecipes(myRecipes.filter((recipe) => recipe._id !== id));
       } else {
         alert("Error deleting recipe");
       }
@@ -63,7 +62,7 @@ const MyRecipes = () => {
                 className="bg-white rounded-xl shadow-lg p-6 space-y-4"
               >
                 <RecipeCard recipe={recipe} />
-                
+
                 <div className="flex justify-between">
                   <button
                     onClick={() => navigate(`/recipes/update/${recipe._id}`)}

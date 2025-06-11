@@ -34,6 +34,12 @@ const router = createBrowserRouter([
         ),
       },
       {
+        path: "recipes/update/:id",
+        element: <UpdateForm></UpdateForm>,
+        loader: ({ params }) =>
+          fetch(`http://localhost:4000/recipes/${params.id}`),
+      },
+      {
         path: "/login",
         element: <Login></Login>,
       },
