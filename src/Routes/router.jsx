@@ -9,7 +9,6 @@ import Login from "../pages/Login";
 import MyRecipes from "../pages/MyRecipes";
 import RecipeDetails from "../pages/RecipeDetails";
 import Register from "../pages/Register";
-import UpdateForm from "../pages/UpdateRecipe";
 import PrivateRoute from "./PrivateRoute";
 
 const router = createBrowserRouter([
@@ -24,7 +23,7 @@ const router = createBrowserRouter([
       {
         path: "/recipes",
         element: <AllRecipes></AllRecipes>,
-        loader: () => fetch("http://localhost:4000/recipes"),
+        loader: () => fetch("https://wrath-cookify-server.vercel.app/recipes"),
       },
       {
         path: "/recipes/:id",
@@ -33,12 +32,6 @@ const router = createBrowserRouter([
             <RecipeDetails></RecipeDetails>
           </PrivateRoute>
         ),
-      },
-      {
-        path: "recipes/update/:id",
-        element: <UpdateForm></UpdateForm>,
-        loader: ({ params }) =>
-          fetch(`http://localhost:4000/recipes/${params.id}`),
       },
       {
         path: "/login",

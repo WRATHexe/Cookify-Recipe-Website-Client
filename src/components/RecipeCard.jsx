@@ -7,7 +7,7 @@ const RecipeCard = ({ recipe }) => {
   const navigate = useNavigate();
 
   const handleDetailsClick = (id) => async () => {
-    await fetch(`http://localhost:4000/recipes/${id}`);
+    await fetch(`https://wrath-cookify-server.vercel.app/recipes/${id}`);
     if (user) {
       navigate(`/recipes/${id}`);
     } else {

@@ -14,7 +14,7 @@ const AddRecipe = () => {
     newRecipe.likeCount = "0";
     newRecipe.createdBy = user?.email || "Anonymous";
 
-    fetch("http://localhost:4000/Recipes", {
+    fetch("https://wrath-cookify-server.vercel.app/Recipes", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

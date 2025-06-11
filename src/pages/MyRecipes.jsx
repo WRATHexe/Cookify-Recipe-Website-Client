@@ -1,28 +1,45 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import Swal from "sweetalert2";
 import { AuthContext } from "../provider/authContext";
+import UpdateRecipeModal from "./UpdateRecipeModal";
+
+const POLL_INTERVAL = 100;
 
 const MyRecipes = () => {
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
   const [myRecipes, setMyRecipes] = useState([]);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedId, setSelectedId] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const pollingRef = useRef();
+
+  // Fetch recipes function
+  const fetchMyRecipes = async () => {
+    try {
+      const res = await fetch(
+        `https://wrath-cookify-server.vercel.app/recipes/user/${user.email}`
+      );
+      const data = await res.json();
+      setMyRecipes(data);
+    } catch (err) {
+      console.error("Error fetching user recipes:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchMyRecipes = async () => {
-      try {
-        const res = await fetch(
-          `http://localhost:4000/recipes/user/${user.email}`
-        );
-        const data = await res.json();
-        setMyRecipes(data);
-      } catch (err) {
-        console.error("Error fetching user recipes:", err);
-      }
-    };
-
+    setLoading(true); // Ensure loading state is set on user or modalOpen change
     fetchMyRecipes();
-  }, [user]);
+    if (modalOpen) {
+      pollingRef.current = setInterval(fetchMyRecipes, POLL_INTERVAL);
+    }
+    return () => {
+      clearInterval(pollingRef.current);
+    };
+  }, [user, modalOpen]);
 
   const handleDelete = async (id) => {
     Swal.fire({
@@ -37,16 +54,19 @@ const MyRecipes = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          const res = await fetch(`http://localhost:4000/recipes/${id}`, {
-            method: "DELETE",
-          });
+          const res = await fetch(
+            `https://wrath-cookify-server.vercel.app/recipes/${id}`,
+            {
+              method: "DELETE",
+            }
+          );
           if (res.ok) {
             setMyRecipes((prev) => prev.filter((r) => r._id !== id));
             Swal.fire({
               title: "Deleted!",
               text: "Your recipe has been deleted.",
               icon: "success",
-              timer: 1500,
+              timer: 1000,
               showConfirmButton: false,
               background: "#fffaf0",
             });
@@ -70,7 +90,11 @@ const MyRecipes = () => {
           </span>
         </h2>
 
-        {myRecipes.length === 0 ? (
+        {loading ? (
+          <div className="flex justify-center items-center h-screen">
+            <div className="w-16 h-16 border-4 border-dashed rounded-full animate-spin border-orange-500"></div>
+          </div>
+        ) : myRecipes.length === 0 ? (
           <div className="bg-white rounded-xl p-8 text-center shadow-md border border-orange-200">
             <p className="text-gray-700 text-lg">
               🍽️ You haven’t added any recipes yet.
@@ -123,7 +147,10 @@ const MyRecipes = () => {
                   onClick={(e) => e.stopPropagation()}
                 >
                   <button
-                    onClick={() => navigate(`/recipes/update/${recipe._id}`)}
+                    onClick={() => {
+                      setSelectedId(recipe._id);
+                      setModalOpen(true);
+                    }}
                     className="flex-1 flex items-center justify-center gap-2 py-2 text-sm font-semibold bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-full shadow hover:from-indigo-600 hover:to-blue-600 hover:scale-105 transition-all duration-200"
                   >
                     <svg
@@ -166,6 +193,14 @@ const MyRecipes = () => {
           </div>
         )}
       </div>
+
+      {modalOpen && (
+        <UpdateRecipeModal
+          isOpen={modalOpen}
+          onClose={() => setModalOpen(false)}
+          id={selectedId}
+        />
+      )}
     </div>
   );
 };

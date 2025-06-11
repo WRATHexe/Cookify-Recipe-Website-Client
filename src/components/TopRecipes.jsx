@@ -6,7 +6,7 @@ const TopRecipes = ({ isDarkMode }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch("http://localhost:4000/recipes/top")
+    fetch("https://wrath-cookify-server.vercel.app/recipes/top")
       .then((res) => res.json())
       .then((data) => setRecipes(data));
   }, []);

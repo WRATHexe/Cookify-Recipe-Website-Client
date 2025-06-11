@@ -25,15 +25,6 @@ const Hero = ({ isDarkMode }) => {
             inspiration, save your favorites, and join a community of food
             lovers.
           </p>
-          <button
-            onClick={() => {
-              const el = document.getElementById("top-recipes");
-              if (el) el.scrollIntoView({ behavior: "smooth" });
-            }}
-            className="inline-block bg-orange-500 hover:bg-orange-600 text-white font-semibold px-7 py-3 rounded-full shadow transition duration-200 text-lg"
-          >
-            Explore Top Recipes
-          </button>
         </div>
         <div className="flex-1 flex justify-center">
           <Lottie

@@ -14,7 +14,9 @@ const RecipeDetails = () => {
   useEffect(() => {
     const fetchRecipe = async () => {
       try {
-        const res = await fetch(`http://localhost:4000/recipes/${id}`);
+        const res = await fetch(
+          `https://wrath-cookify-server.vercel.app/recipes/${id}`
+        );
         if (!res.ok) {
           setRecipe(null);
         } else {
@@ -45,7 +47,7 @@ const RecipeDetails = () => {
     }
 
     const response = await fetch(
-      `http://localhost:4000/recipes/${recipe._id}/like`,
+      `https://wrath-cookify-server.vercel.app/recipes/${recipe._id}/like`,
       { method: "PATCH", headers: { "Content-Type": "application/json" } }
     );
 
