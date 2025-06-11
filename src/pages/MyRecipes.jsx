@@ -1,79 +1,163 @@
 import { useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router"; // Assuming you have an AuthContext to get user data
-import RecipeCard from "../components/RecipeCard"; // Import RecipeCard for rendering each recipe
+import { useNavigate } from "react-router";
+import Swal from "sweetalert2";
 import { AuthContext } from "../provider/authContext";
 
 const MyRecipes = () => {
   const navigate = useNavigate();
-  const { user } = useContext(AuthContext); // Get the logged-in user from context
-  const [myRecipes, setMyRecipes] = useState([]); // State for storing the user's recipes
+  const { user } = useContext(AuthContext);
+  const [myRecipes, setMyRecipes] = useState([]);
 
   useEffect(() => {
     const fetchMyRecipes = async () => {
       try {
-        const response = await fetch(
+        const res = await fetch(
           `http://localhost:4000/recipes/user/${user.email}`
         );
-        const data = await response.json();
-        setMyRecipes(data); // Set the fetched recipes into state
-      } catch (error) {
-        console.error("Error fetching recipes:", error);
+        const data = await res.json();
+        setMyRecipes(data);
+      } catch (err) {
+        console.error("Error fetching user recipes:", err);
       }
     };
 
     fetchMyRecipes();
-  }, [user, navigate]);
+  }, [user]);
 
-  // Handle recipe deletion
   const handleDelete = async (id) => {
-    try {
-      const response = await fetch(`http://localhost:4000/recipes/${id}`, {
-        method: "DELETE",
-      });
-      if (response.ok) {
-        setMyRecipes(myRecipes.filter((recipe) => recipe._id !== id));
-      } else {
-        alert("Error deleting recipe");
+    Swal.fire({
+      title: "Are you sure?",
+      text: "This recipe will be deleted permanently!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#eab308",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+      background: "#fffaf0",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const res = await fetch(`http://localhost:4000/recipes/${id}`, {
+            method: "DELETE",
+          });
+          if (res.ok) {
+            setMyRecipes((prev) => prev.filter((r) => r._id !== id));
+            Swal.fire({
+              title: "Deleted!",
+              text: "Your recipe has been deleted.",
+              icon: "success",
+              timer: 1500,
+              showConfirmButton: false,
+              background: "#fffaf0",
+            });
+          } else {
+            Swal.fire("Failed!", "Failed to delete recipe.", "error");
+          }
+        } catch (err) {
+          console.error("Delete error:", err);
+          Swal.fire("Error!", "Delete error occurred.", "error");
+        }
       }
-    } catch (error) {
-      console.error("Error deleting recipe:", error);
-    }
+    });
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-indigo-50 via-blue-50 to-purple-50 py-12 px-6">
-      <div className="w-full max-w-6xl mx-auto">
-        <h2 className="text-3xl font-bold text-center text-gray-800 mb-8">
-          My Recipes
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 py-12 px-4 sm:px-8">
+      <div className="max-w-6xl mx-auto">
+        <h2 className="text-4xl font-extrabold text-center text-orange-600 mb-10 flex items-center justify-center gap-2 drop-shadow">
+          <span className="inline-block px-4 py-2 rounded-2xl">
+            <span className="font-bold">🍳 My Recipes</span>
+          </span>
         </h2>
 
-        {/* If no recipes are found */}
         {myRecipes.length === 0 ? (
-          <div className="bg-white p-6 rounded-xl shadow-md text-center">
-            <p className="text-lg text-gray-700">
-              You haven't added any recipes yet. Start by adding your own!
+          <div className="bg-white rounded-xl p-8 text-center shadow-md border border-orange-200">
+            <p className="text-gray-700 text-lg">
+              🍽️ You haven’t added any recipes yet.
+              <br />
+              Start sharing your creations today!
             </p>
+            <button
+              onClick={() => navigate("/add-recipe")}
+              className="mt-6 px-6 py-2 bg-orange-500 text-white rounded-full hover:bg-orange-600 transition"
+            >
+              Add Recipe
+            </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
             {myRecipes.map((recipe) => (
               <div
                 key={recipe._id}
-                className="bg-white rounded-xl shadow-lg p-6 space-y-4"
+                className="bg-white border border-orange-100 rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition duration-300 group cursor-pointer"
+                onClick={() => navigate(`/recipes/${recipe._id}`)}
               >
-                <RecipeCard recipe={recipe} />
+                {/* Recipe Image */}
+                <img
+                  src={
+                    recipe.photo ||
+                    "https://via.placeholder.com/400x250?text=No+Image"
+                  }
+                  alt={recipe.title}
+                  className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                />
 
-                <div className="flex justify-between">
+                {/* Recipe Info */}
+                <div className="p-5 space-y-2">
+                  <h3 className="text-lg font-bold text-gray-800 line-clamp-1">
+                    {recipe.title}
+                  </h3>
+                  <p className="text-sm text-gray-600">
+                    <span className="font-semibold">Cuisine:</span>{" "}
+                    {recipe.cuisineType}
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    <span className="font-semibold">Prep Time:</span>{" "}
+                    {recipe.prepTime} mins
+                  </p>
+                </div>
+
+                {/* Action Buttons */}
+                <div
+                  className="flex justify-between items-center px-5 py-4 border-t border-orange-100 bg-orange-50 gap-3"
+                  onClick={(e) => e.stopPropagation()}
+                >
                   <button
                     onClick={() => navigate(`/recipes/update/${recipe._id}`)}
-                    className="btn bg-blue-500 text-white rounded-lg"
+                    className="flex-1 flex items-center justify-center gap-2 py-2 text-sm font-semibold bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-full shadow hover:from-indigo-600 hover:to-blue-600 hover:scale-105 transition-all duration-200"
                   >
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M15.232 5.232l3.536 3.536M9 13l6.586-6.586a2 2 0 112.828 2.828L11.828 15.828a2 2 0 01-2.828 0L9 13zm0 0V21h8"
+                      ></path>
+                    </svg>
                     Edit
                   </button>
                   <button
                     onClick={() => handleDelete(recipe._id)}
-                    className="btn bg-red-500 text-white rounded-lg"
+                    className="flex-1 flex items-center justify-center gap-2 py-2 text-sm font-semibold bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-full shadow hover:from-pink-600 hover:to-red-600 hover:scale-105 transition-all duration-200"
                   >
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M6 18L18 6M6 6l12 12"
+                      ></path>
+                    </svg>
                     Delete
                   </button>
                 </div>
