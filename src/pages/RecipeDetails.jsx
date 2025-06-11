@@ -9,26 +9,31 @@ const RecipeDetails = () => {
   const [recipe, setRecipe] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchRecipe = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch(`http://localhost:4000/recipes/${id}`);
-        if (!response.ok) {
-          setRecipe(null);
-        } else {
-          const data = await response.json();
-          setRecipe(data);
-        }
-      } catch (error) {
-        console.error("Error fetching recipe:", error);
+  // Fetch recipe (used for both initial load and polling)
+  const fetchRecipe = async () => {
+    try {
+      const response = await fetch(`http://localhost:4000/recipes/${id}`);
+      if (!response.ok) {
         setRecipe(null);
-      } finally {
-        setLoading(false);
+      } else {
+        const data = await response.json();
+        setRecipe(data);
       }
-    };
+    } catch {
+      setRecipe(null);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
+    setLoading(true);
     fetchRecipe();
+
+    // Poll every 5 seconds for updates
+    const interval = setInterval(fetchRecipe, 3000);
+
+    return () => clearInterval(interval);
   }, [id]);
 
   if (loading) {
@@ -46,7 +51,8 @@ const RecipeDetails = () => {
       </div>
     );
   }
-  const handleLike = () => {
+
+  const handleLike = async () => {
     if (user.email === recipe.createdBy) {
       Swal.fire({
         title: "You cannot like your own recipe!",
@@ -55,14 +61,22 @@ const RecipeDetails = () => {
       });
       return;
     }
-    // Increment likes logic here
-    // For now, just log to console
-    console.log("Recipe liked!");
-    // You can also update the state to reflect the new likes count
-    setRecipe((prevRecipe) => ({
-      ...prevRecipe,
-      likeCount: prevRecipe.likeCount + 1,
-    }));
+
+    const response = await fetch(
+      `http://localhost:4000/recipes/${recipe._id}/like`,
+      {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+
+    if (response.ok) {
+      const data = await response.json();
+      setRecipe((prev) => ({
+        ...prev,
+        likeCount: data.likeCount,
+      }));
+    }
   };
 
   return (
