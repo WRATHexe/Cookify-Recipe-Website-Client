@@ -6,29 +6,27 @@ const AllRecipes = () => {
   const recipes = useLoaderData();
   const [selectedCuisine, setSelectedCuisine] = useState("All");
 
-  // Dynamically get unique cuisine types from recipes
   const cuisineTypes = useMemo(() => {
     const types = recipes.map((r) => r.cuisineType).filter(Boolean);
     return ["All", ...Array.from(new Set(types))];
   }, [recipes]);
 
-  // Filter recipes by selected cuisine type
   const filteredRecipes =
     selectedCuisine === "All"
       ? recipes
       : recipes.filter((recipe) => recipe.cuisineType === selectedCuisine);
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-indigo-50 via-blue-50 to-purple-50 py-12 px-6">
-      <div className="w-full max-w-6xl mx-auto">
-        <h2 className="text-3xl font-bold text-center text-gray-800 mb-8">
-          All Recipes
+    <section className="min-h-screen bg-gradient-to-br from-orange-50 via-yellow-50 to-rose-50 py-12 px-4">
+      <div className="max-w-7xl mx-auto">
+        <h2 className="text-4xl font-extrabold text-center text-orange-600 mb-10">
+          🧾 Browse All Recipes
         </h2>
 
-        {/* Cuisine Type Filter Dropdown */}
-        <div className="flex justify-end mb-6">
+        {/* Filter Dropdown */}
+        <div className="flex justify-end mb-8">
           <select
-            className="p-3 border border-gray-300 rounded-lg shadow focus:ring-2 focus:ring-indigo-500"
+            className="px-4 py-3 text-sm border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white text-gray-700"
             value={selectedCuisine}
             onChange={(e) => setSelectedCuisine(e.target.value)}
           >
@@ -40,13 +38,20 @@ const AllRecipes = () => {
           </select>
         </div>
 
+        {/* Grid of Recipe Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {filteredRecipes.map((recipe) => (
-            <RecipeCard key={recipe._id} recipe={recipe} />
-          ))}
+          {filteredRecipes.length > 0 ? (
+            filteredRecipes.map((recipe) => (
+              <RecipeCard key={recipe._id} recipe={recipe} />
+            ))
+          ) : (
+            <p className="col-span-full text-center text-gray-600 italic">
+              No recipes found for selected cuisine.
+            </p>
+          )}
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 

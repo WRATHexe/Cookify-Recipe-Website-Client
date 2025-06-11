@@ -7,13 +7,7 @@ const RecipeCard = ({ recipe }) => {
   const navigate = useNavigate();
 
   const handleDetailsClick = (id) => async () => {
-    await fetch(`http://localhost:4000/recipes/${id}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }).then((res) => res.json());
-
+    await fetch(`http://localhost:4000/recipes/${id}`);
     if (user) {
       navigate(`/recipes/${id}`);
     } else {
@@ -22,19 +16,31 @@ const RecipeCard = ({ recipe }) => {
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-lg p-6 space-y-4">
+    <div className="bg-white hover:shadow-xl transition duration-300 rounded-2xl shadow-md p-5 flex flex-col items-center space-y-4 border border-orange-100">
       <img
-        src={recipe.photo}
+        src={
+          recipe.photo ||
+          "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
+        }
         alt={recipe.title}
-        className="w-full h-48 object-cover rounded-xl"
+        className="w-full h-44 object-cover rounded-xl"
       />
-      <h3 className="text-xl font-semibold">{recipe.title}</h3>
-      <p className="text-sm text-gray-600">Cuisine: {recipe.cuisineType}</p>
-      <p className="text-sm text-gray-600">Prep Time: {recipe.prepTime} mins</p>
+
+      <div className="w-full text-center">
+        <h3 className="text-lg font-bold text-orange-600 mb-1">
+          {recipe.title}
+        </h3>
+        <p className="text-sm text-gray-600 mb-1">
+          <strong>Cuisine:</strong> {recipe.cuisineType}
+        </p>
+        <p className="text-sm text-gray-600">
+          <strong>Prep Time:</strong> {recipe.prepTime} mins
+        </p>
+      </div>
 
       <button
         onClick={handleDetailsClick(recipe._id)}
-        className="text-indigo-600 hover:text-indigo-800 font-semibold btn btn-outline btn-sm rounded-full transition duration-300 hover:bg-indigo-50"
+        className="mt-2 px-5 py-2 text-sm font-semibold text-white bg-orange-500 hover:bg-orange-600 transition rounded-full shadow"
       >
         See Details
       </button>

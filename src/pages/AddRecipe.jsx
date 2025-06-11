@@ -11,6 +11,7 @@ const AddRecipe = () => {
     const form = event.target;
     const formData = new FormData(form);
     const newRecipe = Object.fromEntries(formData.entries());
+    newRecipe.likeCount = "0";
     newRecipe.createdBy = user?.email || "Anonymous";
 
     fetch("http://localhost:4000/Recipes", {
@@ -26,7 +27,7 @@ const AddRecipe = () => {
           Swal.fire({
             title: "Recipe Added Successfully!",
             icon: "success",
-            timer: 2000,
+            timer: 1000,
             showConfirmButton: false,
           });
           //form.reset();
@@ -35,144 +36,166 @@ const AddRecipe = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-indigo-50 via-blue-50 to-purple-50 flex items-center justify-center py-12 px-6">
-      <div className="w-full max-w-2xl bg-white p-8 rounded-2xl shadow-xl border border-gray-100 space-y-8">
-        <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">
-          Add a New Recipe 🍽️
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-yellow-50 to-amber-100 flex items-center justify-center py-12 px-4">
+      <div className="w-full max-w-2xl bg-white/90 backdrop-blur-md p-10 rounded-3xl shadow-2xl border border-orange-200">
+        <h2 className="text-4xl font-extrabold text-center text-orange-600 mb-10 drop-shadow">
+          Add a New Recipe{" "}
+          <span role="img" aria-label="plate">
+            🍽️
+          </span>
         </h2>
 
-        <form className="space-y-6" onSubmit={handleAddCoffee}>
-          {/* Image Upload Section */}
-          <div>
-            <label className="text-lg font-semibold text-gray-700">
-              Recipe Photo URL
-            </label>
-            <input
-              type="text"
-              name="photo"
-              placeholder="Enter the recipe photo URL"
-              className="input w-full p-4 border-2 border-gray-300 rounded-xl shadow-md focus:ring-2 focus:ring-indigo-500 transition-all duration-300 ease-in-out"
-            />
-          </div>
-
-          {/* Recipe Title Section */}
-          <div>
-            <label className="text-lg font-semibold text-gray-700">
-              Recipe Title
-            </label>
-            <input
-              required
-              type="text"
-              name="title"
-              placeholder="Enter the recipe name"
-              className="input w-full p-4 border-2 border-gray-300 rounded-xl shadow-md focus:ring-2 focus:ring-indigo-500 transition-all duration-300 ease-in-out"
-            />
-          </div>
-
-          {/* Ingredients Section */}
-          <div>
-            <label className="text-lg font-semibold text-gray-700">
-              Ingredients
-            </label>
-            <textarea
-              required
-              placeholder="List ingredients here"
-              name="ingredients"
-              className="textarea w-full p-4 border-2 border-gray-300 rounded-xl shadow-md focus:ring-2 focus:ring-indigo-500 transition-all duration-300 ease-in-out"
-              rows="4"
-            ></textarea>
-          </div>
-
-          {/* Instructions Section */}
-          <div>
-            <label className="text-lg font-semibold text-gray-700">
-              Cooking Instructions
-            </label>
-            <textarea
-              required
-              placeholder="Step-by-step instructions"
-              name="instructions"
-              className="textarea w-full p-4 border-2 border-gray-300 rounded-xl shadow-md focus:ring-2 focus:ring-indigo-500 transition-all duration-300 ease-in-out"
-              rows="4"
-            ></textarea>
-          </div>
-
-          <div className="mb-6">
-            <label className="text-lg font-semibold text-gray-700">
-              Cuisine Type
-            </label>
-            <select
-              name="cuisineType"
-              value={cuisineType}
-              onChange={(e) => {
-                setCuisineType(e.target.value);
-              }}
-              className="w-full p-4 border-2 border-gray-300 rounded-xl shadow-md focus:ring-2 focus:ring-indigo-500 transition-all duration-300 ease-in-out"
-            >
-              <option value="">Select Cuisine</option>
-              <option value="Italian">Italian</option>
-              <option value="Mexican">Mexican</option>
-              <option value="Indian">Indian</option>
-              <option value="Chinese">Chinese</option>
-              <option value="Others">Others</option>
-            </select>
-          </div>
-
-          {/* Preparation Time Section */}
-          <div>
-            <label className="text-lg font-semibold text-gray-700">
-              Preparation Time (minutes)
-            </label>
-            <input
-              required
-              type="number"
-              name="prepTime"
-              min="1"
-              placeholder="Enter prep time"
-              className="input w-full p-4 border-2 border-gray-300 rounded-xl shadow-md focus:ring-2 focus:ring-indigo-500 transition-all duration-300 ease-in-out"
-            />
-          </div>
-
-          {/* Categories Section */}
-          <div>
-            <label className="text-lg font-semibold text-gray-700">
-              Categories
-            </label>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-              {["Breakfast", "Lunch", "Dinner", "Dessert", "Vegan"].map(
-                (cat) => (
-                  <label key={cat} className="flex items-center gap-2">
-                    <input
-                      name="category"
-                      value={cat}
-                      type="checkbox"
-                      className="checkbox checkbox-primary"
-                    />
-                    <span className="text-md">{cat}</span>
-                  </label>
-                )
-              )}
+        <form className="space-y-10" onSubmit={handleAddCoffee}>
+          {/* Recipe Info */}
+          <section>
+            <h3 className="text-xl font-bold text-amber-600 mb-4">
+              Recipe Info
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-base font-semibold text-gray-700 mb-1">
+                  Photo URL
+                </label>
+                <input
+                  type="text"
+                  name="photo"
+                  placeholder="Recipe photo URL"
+                  className="input w-full p-3 border-2 border-orange-200 rounded-xl shadow focus:ring-2 focus:ring-orange-400 focus:border-orange-400 transition"
+                />
+              </div>
+              <div>
+                <label className="block text-base font-semibold text-gray-700 mb-1">
+                  Title <span className="text-red-500">*</span>
+                </label>
+                <input
+                  required
+                  type="text"
+                  name="title"
+                  placeholder="Recipe name"
+                  className="input w-full p-3 border-2 border-orange-200 rounded-xl shadow focus:ring-2 focus:ring-orange-400 focus:border-orange-400 transition"
+                />
+              </div>
             </div>
-          </div>
+          </section>
 
-          {/* Likes (Read-Only) Section */}
-          <div>
-            <label className="text-lg font-semibold text-gray-700">Likes</label>
-            <input
-              type="number"
-              name="likeCount"
-              value="0"
-              readOnly
-              className="input w-full p-4 bg-gray-100 text-gray-500 cursor-not-allowed border-2 border-gray-300 rounded-xl shadow-md"
-            />
-          </div>
+          {/* Ingredients & Instructions */}
+          <section>
+            <h3 className="text-xl font-bold text-amber-600 mb-4">
+              Ingredients & Instructions
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-base font-semibold text-gray-700 mb-1">
+                  Ingredients <span className="text-red-500">*</span>
+                </label>
+                <textarea
+                  required
+                  placeholder="List ingredients here"
+                  name="ingredients"
+                  className="textarea w-full p-3 border-2 border-orange-200 rounded-xl shadow focus:ring-2 focus:ring-orange-400 focus:border-orange-400 transition"
+                  rows="4"
+                ></textarea>
+              </div>
+              <div>
+                <label className="block text-base font-semibold text-gray-700 mb-1">
+                  Cooking Instructions <span className="text-red-500">*</span>
+                </label>
+                <textarea
+                  required
+                  placeholder="Step-by-step instructions"
+                  name="instructions"
+                  className="textarea w-full p-3 border-2 border-orange-200 rounded-xl shadow focus:ring-2 focus:ring-orange-400 focus:border-orange-400 transition"
+                  rows="4"
+                ></textarea>
+              </div>
+            </div>
+          </section>
+
+          {/* Details */}
+          <section>
+            <h3 className="text-xl font-bold text-amber-600 mb-4">Details</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-base font-semibold text-gray-700 mb-1">
+                  Cuisine Type <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  name="cuisineType"
+                  value={cuisineType}
+                  onChange={(e) => setCuisineType(e.target.value)}
+                  placeholder="Enter or select cuisine type"
+                  list="cuisine-options"
+                  className="w-full p-3 border-2 border-orange-200 rounded-xl shadow focus:ring-2 focus:ring-orange-400 focus:border-orange-400 transition"
+                  required
+                />
+                <datalist id="cuisine-options">
+                  <option value="Italian" />
+                  <option value="Mexican" />
+                  <option value="Indian" />
+                  <option value="Bangladeshi" />
+                  <option value="Chinese" />
+                  <option value="France" />
+                  <option value="Others" />
+                </datalist>
+              </div>
+              <div>
+                <label className="block text-base font-semibold text-gray-700 mb-1">
+                  Preparation Time (minutes){" "}
+                  <span className="text-red-500">*</span>
+                </label>
+                <input
+                  required
+                  type="number"
+                  name="prepTime"
+                  min="1"
+                  placeholder="Enter prep time"
+                  className="input w-full p-3 border-2 border-orange-200 rounded-xl shadow focus:ring-2 focus:ring-orange-400 focus:border-orange-400 transition"
+                />
+              </div>
+            </div>
+          </section>
+
+          {/* Categories */}
+          <section>
+            <h3 className="text-xl font-bold text-amber-600 mb-4">
+              Categories
+            </h3>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-2">
+              {[
+                "Breakfast",
+                "Lunch",
+                "Dinner",
+                "Dessert",
+                "Vegan",
+                "Appetizer",
+                "Brunch",
+              ].map((cat) => (
+                <label
+                  key={cat}
+                  className="flex items-center gap-2 bg-orange-50 px-3 py-2 rounded-lg shadow-sm hover:bg-orange-100 transition cursor-pointer"
+                >
+                  <input
+                    name="category"
+                    value={cat}
+                    type="checkbox"
+                    className="checkbox checkbox-warning"
+                  />
+                  <span className="text-md">{cat}</span>
+                </label>
+              ))}
+            </div>
+          </section>
 
           {/* Submit Button */}
           <div>
             <button
               type="submit"
-              className="btn bg-indigo-600 text-white w-full py-4 rounded-xl shadow-lg hover:bg-indigo-700 transition-all duration-300 ease-in-out text-lg font-semibold"
+              className="w-full py-4 rounded-xl shadow-lg bg-gradient-to-r from-orange-500 via-amber-400 to-yellow-400 text-white text-lg font-bold hover:from-orange-600 hover:to-yellow-500 hover:scale-105 transition-all duration-300"
             >
+              <span role="img" aria-label="add">
+                ➕
+              </span>{" "}
               Add Recipe
             </button>
           </div>
