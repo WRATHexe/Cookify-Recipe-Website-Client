@@ -30,7 +30,7 @@ const AddRecipe = () => {
             timer: 1000,
             showConfirmButton: false,
           });
-          //form.reset();
+          form.reset();
         }
       });
   };
